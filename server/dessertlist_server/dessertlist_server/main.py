@@ -42,7 +42,7 @@ def add_place(place: ActivityDetails, access_code: str):
 def delete_place(place_id: int, access_code: str):
     check_secret(access_code)
     global place_details
-    if len(place_details) > place_id:
+    if len(place_details) <= place_id:
         raise HTTPException(status_code=404, detail="place not found")
     del place_details[int(place_id)]
     with open(backup_file_name, "wb") as f:
