@@ -24,7 +24,7 @@ class PlaceStore {
 
   Future<void> removeAt(int index) async {
     await http.delete(Uri.parse(
-        rootURL + "places/" + index.toString() + "/?access_code=" + apiSecret));
+        rootURL + "places/" + index.toString() + "?access_code=" + apiSecret));
     await fetchList();
   }
 
