@@ -52,6 +52,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   PlaceStore places = PlaceStore();
+  late Future<void> fut;
 
   void _addPlace() async {
     final result = await Navigator.push(
@@ -61,62 +62,65 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (result is PlaceDetails) {
       await places.add(result);
-      setState(() {
-        // This call to setState tells the Flutter framework that something has
-        // changed in this State, which causes it to rerun the build method below
-        // so that the display can reflect the updated values. If we changed
-        // _counter without calling setState(), then the build method would not be
-        // called again, and so nothing would appear to happen.
-      });
+      setState(() {});
     }
   }
 
   @override
+  void initState() {
+    super.initState();
+    fut = places.fetchList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
-          child: ListView.separated(
-        padding: const EdgeInsets.all(8),
-        itemCount: places.length(),
-        itemBuilder: (BuildContext context, int index) {
-          return InkWell(
-            child: Container(
-              height: 50,
-              color: Colors.pink.shade100,
-              child: Center(child: Text(places[index].name)),
-            ),
-            onTap: () async {
-              final res = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ViewPlace(place: places[index])));
-              if (res is DeleteAction) {
-                await places.removeAt(index);
-                setState(() {});
-              }
+          child: FutureBuilder<void>(
+        future: fut,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(8),
+            itemCount: places.length(),
+            itemBuilder: (BuildContext context, int index) {
+              return InkWell(
+                child: Container(
+                  height: 50,
+                  color: Colors.pink.shade100,
+                  child: Center(child: Text(places[index].name)),
+                ),
+                onTap: () async {
+                  final res = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ViewPlace(place: places[index])));
+                  if (res is DeleteAction) {
+                    await places.removeAt(index);
+                    setState(() {});
+                  }
+                },
+              );
             },
+            separatorBuilder: (BuildContext context, int index) =>
+                const Divider(),
           );
         },
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
       )),
+      // This trailing comma makes auto-formatting nicer for build methods.
       floatingActionButton: FloatingActionButton(
         onPressed: _addPlace,
         tooltip: 'Add Place',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
