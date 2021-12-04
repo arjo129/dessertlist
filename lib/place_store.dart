@@ -10,7 +10,7 @@ class PlaceStore {
 
   PlaceStore()
       : placeDetails = [],
-        rootURL = "http://192.168.50.24:8000/";
+        rootURL = "https://laksa.arjo129.com/dessertlist/api/";
 
   Future<void> add(PlaceDetails placeDetails) async {
     var jsonBody = JsonEncoder().convert(placeDetails.toJson());
@@ -25,7 +25,7 @@ class PlaceStore {
   }
 
   Future<void> fetchList() async {
-    var places = await http.get(Uri.parse("http://192.168.50.24:8000/"));
+    var places = await http.get(Uri.parse(rootURL));
     var placeJsons = jsonDecode(utf8.decode(places.bodyBytes)) as List;
     placeDetails.clear();
     placeJsons.forEach((element) {

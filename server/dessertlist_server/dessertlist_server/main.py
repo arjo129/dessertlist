@@ -58,7 +58,7 @@ def read_root(access_code: str):
 def start():
     with open("secret.scrt") as f:
         global secret
-        hasher = hashlib.sha256(bytes(f.read(), "utf-8"))
+        hasher = hashlib.sha256(bytes(f.read().strip(), "utf-8"))
         secret = hasher.hexdigest()
 
     if (os.path.isfile(backup_file_name)):
