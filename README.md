@@ -6,3 +6,5 @@ Also this is just me exploring how :cloud: stuff has changed over the years...
 
 :warning: The code here is definitely not how you should write an app. This
 app is for my personal use so go figure.
+
+Can confirm. I am the gf :3 HEHE
